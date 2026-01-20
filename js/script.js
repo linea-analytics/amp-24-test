@@ -1,3 +1,5 @@
+// NEXT / PREV btn
+
 (() => {
     const tabButtons = Array.from(document.querySelectorAll('#ampNav [data-bs-toggle="pill"]'));
     const btnNext = document.getElementById('btnNext');
@@ -38,7 +40,7 @@
 })();
 
 
-// CHART
+// CHARTS
 
 // - HELPERS
 function parseBinCentres(binLabels) {
