@@ -46,16 +46,16 @@
                 <!-- Pills -->
                 <ul class="nav nav-pills amp-pills mt-3 gap-3" id="ampNav" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="tab-design" data-bs-toggle="pill"
+                        <button class="nav-link" id="tab-design" data-bs-toggle="pill"
                             data-bs-target="#pane-design" type="button" role="tab" aria-controls="pane-design"
-                            aria-selected="true">
+                            aria-selected="false">
                             1. Study Design
                         </button>
                     </li>
 
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="tab-pop" data-bs-toggle="pill" data-bs-target="#pane-pop"
-                            type="button" role="tab" aria-controls="pane-pop" aria-selected="false">
+                        <button class="nav-link active" id="tab-pop" data-bs-toggle="pill" data-bs-target="#pane-pop"
+                            type="button" role="tab" aria-controls="pane-pop" aria-selected="true">
                             2. Patient Population
                         </button>
                     </li>
@@ -88,7 +88,7 @@
             <section class="amp-surface">
                 <div class="tab-content" id="ampTabContent">
 
-                    <div class="tab-pane fade show active" id="pane-design" role="tabpanel" aria-labelledby="tab-design"
+                    <div class="tab-pane fade" id="pane-design" role="tabpanel" aria-labelledby="tab-design"
                         tabindex="0">
                         <div class="amp-section">
                             <div class="d-flex align-items-start justify-content-between gap-3 flex-wrap">
@@ -107,7 +107,7 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane fade" id="pane-pop" role="tabpanel" aria-labelledby="tab-pop" tabindex="0">
+                    <div class="tab-pane fade show active" id="pane-pop" role="tabpanel" aria-labelledby="tab-pop" tabindex="0">
                         <!-- Patient Population: drilldowns + charts -->
                         <div class="amp-section">
 
