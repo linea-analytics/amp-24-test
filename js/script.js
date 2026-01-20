@@ -82,74 +82,79 @@ function nearestIndex(centres, value) {
 }
 
 const meanLinesPlugin = {
-    id: 'meanLines',
-    afterDatasetsDraw(chart) {
-        const means = chart.$means;
-        const centres = chart.$centres;
-        if (!means || !centres) return;
+  id: 'meanLines',
+  afterDatasetsDraw(chart) {
+    const means = chart.$means;
+    const centres = chart.$centres;
+    if (!means || !centres) return;
 
-        const { ctx, chartArea, scales } = chart;
-        const x = scales.x;
-        if (!x) return;
+    const { ctx, chartArea, scales } = chart;
+    const x = scales.x;
+    if (!x) return;
 
-        ctx.save();
+    ctx.save();
 
-        const lineStyle = (label) => {
-            // Slightly different styles, but keep it subtle
-            if (label.toLowerCase().includes('treatment')) {
-                ctx.setLineDash([]); // solid
-                ctx.globalAlpha = 0.9;
-            } else {
-                ctx.setLineDash([6, 6]); // dashed
-                ctx.globalAlpha = 0.9;
-            }
-            ctx.lineWidth = 2;
-            ctx.strokeStyle = 'rgba(15, 23, 42, 0.55)';
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
-            ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        };
+    const lineStyle = (label) => {
+      if (label.toLowerCase().includes('treatment')) {
+        ctx.setLineDash([]);
+        ctx.globalAlpha = 0.9;
+      } else {
+        ctx.setLineDash([6, 6]);
+        ctx.globalAlpha = 0.9;
+      }
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.55)';
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.75)';
+      ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+    };
 
-        means.forEach(m => {
-            if (!m || m.value == null) return;
+    means.forEach((m, i) => {
+      if (!m || m.value == null) return;
 
-            const idx = nearestIndex(centres, m.value);
-            const xp = x.getPixelForValue(idx);
+      const idx = nearestIndex(centres, m.value);
+      const xp = x.getPixelForValue(idx);
 
-            // line
-            lineStyle(m.label);
-            ctx.beginPath();
-            ctx.moveTo(xp, chartArea.top);
-            ctx.lineTo(xp, chartArea.bottom);
-            ctx.stroke();
+      // Vertical line
+      lineStyle(m.label);
+      ctx.beginPath();
+      ctx.moveTo(xp, chartArea.top);
+      ctx.lineTo(xp, chartArea.bottom);
+      ctx.stroke();
 
-            // label bubble-ish (simple)
-            const text = `${m.label} mean: ${m.value.toFixed(1)}`;
-            const padX = 8, padY = 5;
-            const textW = ctx.measureText(text).width;
-            const boxW = textW + padX * 2;
-            const boxH = 22;
-            const boxX = Math.min(Math.max(xp + 8, chartArea.left + 6), chartArea.right - boxW - 6);
-            const boxY = chartArea.top + 8;
+      // ---- LABEL POSITIONING (staggered) ----
+      const baseY = chartArea.top + 8;
+      const stagger = i * 26; // vertical separation per label
+      const boxY = baseY + stagger;
 
-            ctx.globalAlpha = 0.85;
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
-            ctx.strokeStyle = 'rgba(15, 23, 42, 0.18)';
-            ctx.setLineDash([]);
-            ctx.lineWidth = 1;
+      const text = `${m.label} mean: ${m.value.toFixed(1)}`;
+      const padX = 8;
+      const textW = ctx.measureText(text).width;
+      const boxW = textW + padX * 2;
+      const boxH = 22;
 
-            ctx.beginPath();
-            const r = 10;
-            ctx.roundRect(boxX, boxY, boxW, boxH, r);
-            ctx.fill();
-            ctx.stroke();
+      const boxX = Math.min(
+        Math.max(xp + 8, chartArea.left + 6),
+        chartArea.right - boxW - 6
+      );
 
-            ctx.globalAlpha = 0.9;
-            ctx.fillStyle = 'rgba(15, 23, 42, 0.80)';
-            ctx.fillText(text, boxX + padX, boxY + 15);
-        });
+      ctx.globalAlpha = 0.85;
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+      ctx.strokeStyle = 'rgba(15, 23, 42, 0.18)';
+      ctx.setLineDash([]);
+      ctx.lineWidth = 1;
 
-        ctx.restore();
-    }
+      ctx.beginPath();
+      ctx.roundRect(boxX, boxY, boxW, boxH, 10);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.80)';
+      ctx.fillText(text, boxX + padX, boxY + 15);
+    });
+
+    ctx.restore();
+  }
 };
 
 
@@ -163,6 +168,11 @@ const meanLinesPlugin = {
 
     // If we are not on the Patient Population tab (or canvases not present), do nothing
     if (!countsCanvas || !distCanvas || !window.Chart) return;
+
+    if (window.ChartDataLabels) {
+        Chart.register(ChartDataLabels);
+    }
+
 
     let PP_DATA = null;
     let countsChart = null;
@@ -200,16 +210,29 @@ const meanLinesPlugin = {
                     legend: { display: false },
                     tooltip: {
                         callbacks: { label: (ctx) => ` ${Number(ctx.raw).toLocaleString('en-GB')}` }
+                    },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'end',
+                        offset: 4,
+                        clamp: true,
+                        formatter: (v) => Number(v).toLocaleString('en-GB'),
+                        font: { weight: '600' }
+                        // If you want a fixed colour:
+                        // color: 'rgba(15, 23, 42, 0.85)'
                     }
                 },
                 scales: {
                     x: { grid: { display: false } },
                     y: {
                         beginAtZero: true,
+                        grace: '15%',                 // <--- adds top headroom so labels fit
                         ticks: { callback: (v) => Number(v).toLocaleString('en-GB') }
                     }
+
                 }
             }
+
         });
 
         const centres = parseBinCentres(seg.distribution.bin_labels);
@@ -248,8 +271,10 @@ const meanLinesPlugin = {
                         callbacks: {
                             label: (ctx) => ` ${ctx.dataset.label}: ${Number(ctx.raw).toFixed(1)}%`
                         }
-                    }
+                    },
+                    datalabels: { display: false } // <--- important
                 },
+
                 scales: {
                     x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: true } },
                     y: {
