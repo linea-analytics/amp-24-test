@@ -1,0 +1,105 @@
+:root{
+  --amp-bg: #f6f7fb;
+  --amp-surface: #ffffff;
+  --amp-border: rgba(17, 24, 39, 0.10);
+  --amp-text: #0f172a;
+  --amp-muted: rgba(15, 23, 42, 0.65);
+  --amp-accent: #4f46e5; /* modern indigo */
+}
+
+html, body {
+  height: 100%;
+}
+
+body{
+  background: var(--amp-bg);
+  color: var(--amp-text);
+}
+
+.amp-shell{
+  min-height: 100%;
+}
+
+.amp-hero{
+  background: linear-gradient(180deg, rgba(79,70,229,0.10), rgba(79,70,229,0.02));
+  border: 1px solid var(--amp-border);
+  border-radius: 18px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+}
+
+.amp-dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--amp-accent);
+  box-shadow: 0 0 0 4px rgba(79,70,229,0.12);
+  display: inline-block;
+}
+
+.amp-badge{
+  border-radius: 999px;
+}
+
+.amp-surface{
+  background: var(--amp-surface);
+  border: 1px solid var(--amp-border);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.06);
+}
+
+.amp-section{
+  padding: 10px;
+}
+
+.amp-empty{
+  border: 1px dashed rgba(15, 23, 42, 0.18);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: centre;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.amp-empty-icon{
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  display: grid;
+  place-items: centre;
+  background: rgba(79,70,229,0.10);
+  color: var(--amp-accent);
+  margin: 0 auto 8px auto;
+  font-size: 18px;
+}
+
+.amp-pills .nav-link{
+  border-radius: 999px;
+  background: rgba(255,255,255,0.75);
+  border: 1px solid var(--amp-border);
+  color: rgba(15,23,42,0.85);
+  padding: 0.45rem 0.75rem;
+}
+
+.amp-pills .nav-link:hover{
+  background: #fff;
+}
+
+.amp-pills .nav-link.active{
+  background: var(--amp-accent);
+  border-color: var(--amp-accent);
+  color: #fff;
+}
+
+/* Make BS primary match accent, without rewriting lots of classes */
+.btn-primary{
+  background: var(--amp-accent);
+  border-color: var(--amp-accent);
+}
+.btn-primary:hover{
+  background: #4338ca;
+  border-color: #4338ca;
+}
+.btn-outline-secondary{
+  border-color: rgba(15,23,42,0.22);
+}
